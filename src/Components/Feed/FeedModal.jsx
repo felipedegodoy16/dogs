@@ -1,29 +1,33 @@
-import React from 'react'
-import styles from './FeedModal.module.css'
-import useFetch from '../../Hooks/useFetch'
-import { PHOTO_GET } from '../../api'
-import Error from '../Helper/Error'
-import Loading from '../Helper/Loading'
-import PhotoContent from '../Photo/PhotoContent'
+import React from "react";
+import styles from "./FeedModal.module.css";
+import useFetch from "../../Hooks/useFetch";
+import { PHOTO_GET } from "../../api";
+import Error from "../Helper/Error";
+import Loading from "../Helper/Loading";
+import PhotoContent from "../Photo/PhotoContent";
 
-const FeedModal = ({ photo }) => {
-  const {data, loading, error, request} = useFetch();
+const FeedModal = ({ photo, setModalPhoto }) => {
+  const { data, loading, error, request } = useFetch();
 
   React.useEffect(() => {
     async function fetchPhoto() {
-      const {url, options} = PHOTO_GET(photo.id);
-      const {response, json} = await request(url, options);
+      const { url, options } = PHOTO_GET(photo.id);
+      const { response, json } = await request(url, options);
     }
     fetchPhoto();
   }, [photo, request]);
 
+  function handleOutsideClick(event) {
+    if (event.target === event.currentTarget) setModalPhoto(null);
+  }
+
   return (
-    <div className={styles.modal}>
+    <div className={styles.modal} onClick={handleOutsideClick}>
       {error && <Error error={error} />}
       {loading && <Loading />}
       {data && <PhotoContent data={data} />}
     </div>
-  )
-}
+  );
+};
 
-export default FeedModal
+export default FeedModal;
